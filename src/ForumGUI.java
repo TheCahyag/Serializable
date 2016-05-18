@@ -3,7 +3,6 @@
  * ForumGUI: TODO
  */
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +17,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.ArrayList;
 
 /**
  * ForumGUI sets up the GUI to enter information for the text block
@@ -26,7 +24,6 @@ import java.util.ArrayList;
  */
 public class ForumGUI extends Application implements Serializable {
     private final int textWidth = 200;
-    private boolean loadFromFile;
     private MessageFields messages;
 
     private Stage window;
@@ -72,7 +69,7 @@ public class ForumGUI extends Application implements Serializable {
     public void start(Stage primaryStage) throws Exception {
         borderPane.setCenter(mainLayout);
         borderPane.setBottom(buttons);
-        borderPane.getStylesheets().add("style.css");
+        borderPane.getStylesheets().add("resources/style.css");
         borderPane.setId("bp");
         setAlignment();
         setSpacing();
@@ -88,11 +85,11 @@ public class ForumGUI extends Application implements Serializable {
      * setTextFields TODO
      */
     private void setTextFields(){
-        nameBox.setText(messages.name);
-        mapBox.setText(messages.map);
-        teamPlayersBox.setText(messages.teamPlayers);
-        tierBox.setText(messages.tier);
-        tierLimitBox.setText(messages.tierLimit);
+        nameBox.setText(this.messages.name);
+        mapBox.setText(this.messages.map);
+        teamPlayersBox.setText(this.messages.teamPlayers);
+        tierBox.setText(this.messages.tier);
+        tierLimitBox.setText(this.messages.tierLimit);
     }
 
     /**
@@ -132,10 +129,25 @@ public class ForumGUI extends Application implements Serializable {
      * onSave TODO
      */
     private void onSave(){
+        this.messages.name = nameBox.getText();
+        this.messages.map = mapBox.getText();
+        this.messages.teamPlayers = teamPlayersBox.getText();
+        this.messages.tier = tierBox.getText();
+        this.messages.tierLimit = tierLimitBox.getText();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Safe");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("All Files", "*.*"));
+        File selectedFile = fileChooser.showOpenDialog(window);
+        if (selectedFile == null){
+            return;
+        }
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
-            fos = new FileOutputStream("test.ser");
+            fos = new FileOutputStream(selectedFile);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(messages);
         } catch (IOException e){
@@ -157,7 +169,7 @@ public class ForumGUI extends Application implements Serializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Safe");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Serialized Files", "*.ser"),
+                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
                 new FileChooser.ExtensionFilter("All Files", "*.*"));
         File selectedFile = fileChooser.showOpenDialog(window);
         if (selectedFile == null){
@@ -169,6 +181,7 @@ public class ForumGUI extends Application implements Serializable {
             fis = new FileInputStream(selectedFile);
             ois = new ObjectInputStream(fis);
             this.messages = (MessageFields) ois.readObject();
+            setTextFields();
         } catch (IOException e){
             e.printStackTrace();
         } catch (ClassNotFoundException cnfe){
@@ -191,5 +204,9 @@ public class ForumGUI extends Application implements Serializable {
      */
     private void onClose(){
         window.close();
+    }
+
+    public static void main(String[] args) {
+        Application.launch(args);
     }
 }
