@@ -9,9 +9,8 @@
  */
 public class Main {
     public static void main(String[] args) {
-//        RunGUI runGUI = new RunGUI();
-//        runGUI.start();
-        FileSerialization fileSerialization = new FileSerialization();
-        fileSerialization.main();
+        RunGUI runGUI = new RunGUI();
+        Thread GUI = new Thread(runGUI);
+        GUI.start();
     }
 }
