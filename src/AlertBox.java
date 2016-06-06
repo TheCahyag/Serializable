@@ -15,12 +15,12 @@ import javafx.stage.Stage;
 /**
  * AlertBox creates a pop-up window and displays a given message
  */
-public class AlertBox {
+class AlertBox {
     /**
      * display displays the message in a pop-up window
      * @param message - the message that will be displayed on the AlertBox
      */
-    public void display(String message){
+    void display(String message){
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);

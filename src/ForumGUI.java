@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -31,9 +32,10 @@ public class ForumGUI extends Application implements Serializable {
     private BorderPane borderPane;
     private VBox mainLayout;
     private HBox buttons;
-    public TextField nameBox, mapBox, teamPlayersBox, tierBox, tierLimitBox;
-    private Label name, map, teamPlayers, tier, tierLimit;
-    private Button save, load;
+    public TextField nameBox, mapBox, teamPlayersBox, tierBox, tierLimitBox, teamLinkBox;
+    private TextArea generatedResult;
+    private Label name, map, teamPlayers, tier, tierLimit, teamLink;
+    private Button save, load, generate;
 
     public ForumGUI(){
         messages = new MessageFields();
@@ -53,12 +55,18 @@ public class ForumGUI extends Application implements Serializable {
         tierBox = new TextField();
         tierLimit = new Label("Total Tier Points:");
         tierLimitBox = new TextField();
+        teamLink = new Label("Team Link:");
+        teamLinkBox = new TextField();
+        generatedResult = new TextArea();
+        generatedResult.setPrefSize(200, 100);
         save = new Button("Save");
         load = new Button("Load");
+        generate = new Button("Generate");
 
         //Layout init
-        mainLayout = new VBox(5, name, nameBox, map, mapBox, teamPlayers, teamPlayersBox, tier, tierBox, tierLimit, tierLimitBox);
-        buttons = new HBox(10, save, load);
+        mainLayout = new VBox(5, name, nameBox, map, mapBox, teamPlayers,
+                teamPlayersBox, tier, tierBox, tierLimit, tierLimitBox, teamLink, teamLinkBox, generatedResult);
+        buttons = new HBox(10, save, load, generate);
         scene = new Scene(borderPane, 300, 500);
 
         //Setting TextFields
@@ -90,6 +98,8 @@ public class ForumGUI extends Application implements Serializable {
         teamPlayersBox.setText(this.messages.teamPlayers);
         tierBox.setText(this.messages.tier);
         tierLimitBox.setText(this.messages.tierLimit);
+        teamLinkBox.setText(this.messages.teamLink);
+        generatedResult.setText(this.messages.generatedResult);
     }
 
     /**
@@ -111,10 +121,13 @@ public class ForumGUI extends Application implements Serializable {
         teamPlayersBox.setMaxWidth(textWidth);
         tierBox.setMaxWidth(textWidth);
         tierLimitBox.setMaxWidth(textWidth);
+        teamLinkBox.setMaxWidth(textWidth);
+        generatedResult.setMaxWidth(300);
 
         //Buttons
         save.setPrefWidth(100);
         load.setPrefWidth(100);
+        generate.setPrefWidth(100);
     }
 
     /**
@@ -123,6 +136,20 @@ public class ForumGUI extends Application implements Serializable {
     private void setButtonActions(){
         save.setOnAction(event -> onSave());
         load.setOnAction(event -> onLoad());
+        generate.setOnAction(event -> onGenerate());
+    }
+
+    /**
+     * onGenerate TODO
+     */
+    private void onGenerate(){
+        String result = "[B][U]" + nameBox.getText() + "[/U][/B]" +
+                "\nENTER DATES HERE" +
+                "\n" + mapBox.getText() + " " + teamPlayersBox.getText() + "v" + teamPlayersBox.getText() +
+                " T" + tierBox.getText() + " (" + tierLimitBox.getText() + " max tier points)" +
+                "\nTeam: [URL]" + teamLinkBox.getText() + "[/URL]"+
+                "\nWoT Scout: [URL]...[/URL]";
+        generatedResult.setText(result);
     }
 
     /**
@@ -134,6 +161,7 @@ public class ForumGUI extends Application implements Serializable {
         this.messages.teamPlayers = teamPlayersBox.getText();
         this.messages.tier = tierBox.getText();
         this.messages.tierLimit = tierLimitBox.getText();
+        this.messages.teamLink = teamLinkBox.getText();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Safe");
